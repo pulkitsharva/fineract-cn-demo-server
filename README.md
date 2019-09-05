@@ -1,19 +1,54 @@
 # Apache Fineract CN Demo Server [![Build Status](https://api.travis-ci.com/apache/fineract-cn-demo-server.svg?branch=develop)](https://travis-ci.com/apache/fineract-cn-demo-server)
-Simple environment used for demo purposes
+Sample server setup used for demo purposes
 
 ## Preconditions
-All Apache Fineract CN projects must be published to your local Maven repository
+1. Java
+2. Gradle
+3. Maven
+4. Cassandra
+5. Postgres
 
-## Run
-### IDE
-Just start the class DemoServer
+## Steps
+1. Git clone the apache fineract-cn-demo-server code
 
-### Executable JAR file
-1. Open a terminal window
-2. Change directory to your project location
-3. Run `gradlew publishToMavenLocal`
-4. Change directory to build/libs
-5. Run `java -jar demo-server-0.1.0-BUILD-SNAPSHOT.jar`
+    `git clone https://github.com/apache/fineract-cn-demo-server`
+2. Change directory to scripts/dependencies_to_local_maven
+
+    `cd fineract-cn-demo-server/scripts/dependencies_to_local_maven/`
+3. Install all the dependencies using Maven, this is required to install all the dependencies required by demo-server
+
+    `mvn package`
+4. Go back to your project's parent folder
+
+    `cd ../../`
+5. Build the project using gradle wrapper
+
+    `./gradlew publishToMavenLocal`
+6. Change directory to build/libs
+
+    `cd build/libs`
+7. We have two options to run demo server
+
+    ### i.  Using embedded Postgresql & Cassandra
+      a. If you are running for the first time then run below command
+          
+          java -jar -Ddemoserver.provision=true -Ddemoserver.lite=true demo-server-0.1.0-BUILD-SNAPSHOT.jar
+      b. If you have already succesfully ran the first step and you are starting the server for the second time then run below command
+      
+          java -jar -Ddemoserver.lite=true demo-server-0.1.0-BUILD-SNAPSHOT.jar
+  
+    ### ii. Using external Postgresql & Cassandra
+      a. If you are running for the first time then run below command
+        
+          java -jar -Ddemoserver.persistent=true -Ddemoserver.provision=true -Ddemoserver.lite=true -Dcustom.cassandra.contactPoints=127.0.0.1:9042 -Dcassandra.cluster.user=cassandra -Dcassandra.cluster.pwd=password -Dcustom.postgresql.host=127.0.0.1 -Dcustom.postgresql.port=5432 -Dcustom.postgresql.user=postgres -Dcustom.postgresql.password=password demo-server-0.1.0-BUILD-SNAPSHOT.jar
+      b. If you have already succesfully ran the first step and you are starting the server for the second time then run below command
+          
+          java -jar -Ddemoserver.persistent=true -Ddemoserver.lite=true -Dcustom.cassandra.contactPoints=127.0.0.1:9042 -Dcassandra.cluster.user=cassandra -Dcassandra.cluster.pwd=password -Dcustom.postgresql.host=127.0.0.1 -Dcustom.postgresql.port=5432 -Dcustom.postgresql.user=postgres -Dcustom.postgresql.password=password demo-server-0.1.0-BUILD-SNAPSHOT.jar
+      
+The following log statement signals the completion of the build:
+
+`INFO  o.e.jetty.server.AbstractConnector - Stopped ServerConnector@1bdb0376{HTTP/1.1,[http/1.1]}`
+    
 
 #### Supported Environment Variables
 
@@ -37,11 +72,11 @@ cassandra user to use
 ##### cassandra.cluster.pwd
 cassandra password to use
 
-##### custom.mariadb.host
-mariadb host to use
+##### custom.postgresql.host
+postgresql host to use
 
-##### custom.mariadb.user
-mariadb user to use
+##### custom.postgresql.user
+postgresql user to use
 
-##### custom.mariadb.password
-mariadb password to use
+##### custom.postgresql.password
+postgresql password to use
